@@ -46,10 +46,10 @@ Y_test = np_utils.to_categorical(y_test, nb_classes)
 
 model = Sequential()
 
-model.add(Convolution2D(nb_filters, nb_conv, nb_conv, border_mode='valid',
+model.add(Convolution2D(nb_filters, nb_conv, nb_conv, border_mode='same',
                         input_shape=(1, img_rows, img_cols)))
 model.add(Activation('relu'))
-model.add(Convolution2D(nb_filters, nb_conv, nb_conv))
+model.add(Convolution2D(nb_filters, nb_conv, nb_conv, border_mode='same'))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(nb_pool, nb_pool)))
 model.add(Dropout(0.25))
@@ -84,6 +84,6 @@ with open("./sample_mnist.dat", "w") as fin:
 print('Prediction on saved sample:')
 print(str(model.predict(X_train[:1])))
 # on my pc I got:
-#[[ 0.01091413  0.00714095  0.06447848  0.39298642  0.00306931  0.36678436
-#   0.0646545   0.00475969  0.08085762  0.00435456]]
+#[[ 0.03729606  0.00783805  0.06588034  0.21728528  0.01093729  0.34730983
+#   0.01350389  0.02174525  0.26624694  0.01195715]]
 

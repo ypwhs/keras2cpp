@@ -10,7 +10,8 @@ namespace keras
 {
 	std::vector<float> read_1d_array(std::ifstream &fin, int cols);
 	void missing_activation_impl(const std::string &act);
-	std::vector< std::vector<float> > conv_single_depth(std::vector< std::vector<float> > const & im, std::vector< std::vector<float> > const & k);
+	std::vector< std::vector<float> > conv_single_depth_valid(std::vector< std::vector<float> > const & im, std::vector< std::vector<float> > const & k);
+	std::vector< std::vector<float> > conv_single_depth_same(std::vector< std::vector<float> > const & im, std::vector< std::vector<float> > const & k);
 
 	class DataChunk;
 	class DataChunk2D;
@@ -76,7 +77,12 @@ public:
 
 class keras::DataChunkFlat : public keras::DataChunk {
 public:
+  DataChunkFlat(size_t size) : f(size) { }
+  DataChunkFlat(size_t size, float init) : f(size, init) { }
+  DataChunkFlat(void) { }
+
   std::vector<float> f;
+  std::vector<float> & get_1d_rw() { return f; }
   std::vector<float> const & get_1d() const { return f; }
   void set_data(std::vector<float> const & d) { f = d; };
   size_t get_data_dim(void) const { return 1; }
@@ -164,6 +170,7 @@ public:
   virtual unsigned int get_input_cols() const { return m_cols; }
   virtual unsigned int get_output_units() const { return m_kernels_cnt; }
 
+  std::string m_border_mode;
   int m_kernels_cnt;
   int m_depth;
   int m_rows;
@@ -189,7 +196,7 @@ public:
 
 class keras::KerasModel {
 public:
-  KerasModel(const std::string &input_fname);
+  KerasModel(const std::string &input_fname, bool verbose);
   ~KerasModel();
   std::vector<float> compute_output(keras::DataChunk *dc);
 
@@ -202,6 +209,7 @@ private:
   void load_weights(const std::string &input_fname);
   int m_layers_cnt; // number of layers
   std::vector<Layer *> m_layers; // container with layers
+  bool m_verbose;
 
 };
 
